@@ -1,6 +1,7 @@
 Collection of Competitive Programming problem solutions organized by topic. Each topic includes a mix of classical and recent problems, with C++ implementation solutions. Every file contains only the solution code, with a comment at the top linking to the original problem.
 
 ### Structure
+```text
 CP-Problem-Solutions/
 │
 ├── Binary-Search/
@@ -16,6 +17,7 @@ CP-Problem-Solutions/
 │
 └── Segment-Tree/
     └── CF-2145E-Predicting-Popularity.cpp
+```
 
 - File Name Convention: `<Judge>-<ProblemCode>-<ProblemName>.cpp`
 - At the top of each solution file: `// Problem link: <URL>`
