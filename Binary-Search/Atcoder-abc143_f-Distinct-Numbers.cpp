@@ -4,8 +4,6 @@
 using namespace std;
 using ll = long long;
 
-#define dbg(a)  cerr << #a << " " << a << "\n"
-
 void solve() {
   int n;  cin >> n;
   vector<int> a(n), cnt(n);
