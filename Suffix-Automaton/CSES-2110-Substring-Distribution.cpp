@@ -1,4 +1,4 @@
-// Problem link: https://cses.fi/problemset/task/2102
+// Problem link: https://cses.fi/problemset/task/2110
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -8,7 +8,11 @@ const int N = 1e5 + 5;
 int len[2 * N], lnk[2 * N], last, sz = 1;
 unordered_map<char, int> to[2 * N];
 
+int deg[2 * N], cnt[2 * N];
+
 void init(int n) {
+  fill(deg, deg + 2 * n, 0);
+  fill(cnt, cnt + 2 * n, 0);
   while (sz) to[--sz].clear();
   lnk[0] = -1, last = 0, sz = 1;
 }
@@ -16,6 +20,7 @@ void init(int n) {
 void add (char c) {
   int cur = sz++;
   len[cur] = len[last] + 1;
+  cnt[cur] = 1;
   int u = last;
   last = cur;
   while (u != -1 and !to[u].count(c)) {
@@ -42,13 +47,22 @@ void add (char c) {
   }
 }
 
-bool exist (string &p) {
-  int u = 0;
-  for (auto c: p) {
-    if (!to[u].count(c)) return false;
-    u = to[u][c];
+void build() {
+  deg[0] = 1;
+  for (int u = 1; u < sz; ++u) {
+    deg[lnk[u]]++;
   }
-  return true;
+  queue<int> q;
+  for (int u = 0; u < sz; ++u) {
+    if (!deg[u]) q.push(u);
+  }
+  while (!q.empty()) {
+    int u = q.front(); q.pop();
+    int v = lnk[u];
+    cnt[v] += cnt[u];
+    deg[v]--;
+    if (!deg[v]) q.push(v);
+  }
 }
 
 void solve () {
@@ -58,13 +72,17 @@ void solve () {
   for (auto c: s) {
     add(c);
   }
-
-  int k; cin >> k;
-  while (k--) {
-    string t; cin >> t;
-    if (exist(t)) cout << "YES\n";
-    else cout << "NO\n";
+  build();
+  vector<int> ans(n + 2);
+  for (int u = 1; u < sz; ++u) {
+    ans[len[lnk[u]] + 1]++;
+    ans[len[u] + 1]--;
   }
+  for (int u = 1; u <= n; ++u) {
+    ans[u] += ans[u - 1];
+    cout << ans[u] << " ";
+  }
+  cout << "\n";
 }
 
 int main() {

@@ -1,15 +1,20 @@
-// Problem link: https://cses.fi/problemset/task/2102
+// Problem link: https://cses.fi/problemset/task/2108
 
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
 
 const int N = 1e5 + 5;
 
 int len[2 * N], lnk[2 * N], last, sz = 1;
-unordered_map<char, int> to[2 * N];
+map<char, int> to[2 * N];
+
+vector<int> nodes[2 * N];
+ll dp[2 * N];
 
 void init(int n) {
-  while (sz) to[--sz].clear();
+  fill(dp, dp + 2 * n, -1);
+  while (sz) to[--sz].clear(), nodes[sz].clear();
   lnk[0] = -1, last = 0, sz = 1;
 }
 
@@ -42,29 +47,50 @@ void add (char c) {
   }
 }
 
-bool exist (string &p) {
-  int u = 0;
-  for (auto c: p) {
-    if (!to[u].count(c)) return false;
-    u = to[u][c];
+void build () {
+  for (int u = 0; u < sz; ++u) {
+    nodes[len[u]].push_back(u);
   }
-  return true;
+  for (int l = sz - 1; l >= 0; --l) {
+    for (auto u: nodes[l]) {
+      dp[u] = 1;
+      for (auto [c, v]: to[u]) {
+        dp[u] += dp[v];
+      }
+    }
+  }
+}
+
+string kth (ll k) {
+  string s;
+  int u = 0;
+  while (k > 0) {
+    for (auto [c, v]: to[u]) {
+      if (k > dp[v]) {
+        k -= dp[v];
+      }
+      else {
+        k--;
+        s += c;
+        u = v;
+        break;
+      }
+    }
+  }
+  return s;
 }
 
 void solve () {
   string s; cin >> s;
+  ll k; cin >> k;
   int n = s.size();
   init(n);
   for (auto c: s) {
     add(c);
   }
-
-  int k; cin >> k;
-  while (k--) {
-    string t; cin >> t;
-    if (exist(t)) cout << "YES\n";
-    else cout << "NO\n";
-  }
+  build();
+  string ans;
+  cout << kth(k) << "\n";
 }
 
 int main() {

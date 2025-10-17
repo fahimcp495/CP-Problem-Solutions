@@ -1,14 +1,18 @@
-// Problem link: https://cses.fi/problemset/task/2102
+// Problem link: https://cses.fi/problemset/task/2105
 
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
 
 const int N = 1e5 + 5;
 
 int len[2 * N], lnk[2 * N], last, sz = 1;
 unordered_map<char, int> to[2 * N];
 
+ll dp[2 * N];
+
 void init(int n) {
+  fill(dp, dp + 2 * n, -1);
   while (sz) to[--sz].clear();
   lnk[0] = -1, last = 0, sz = 1;
 }
@@ -42,13 +46,14 @@ void add (char c) {
   }
 }
 
-bool exist (string &p) {
-  int u = 0;
-  for (auto c: p) {
-    if (!to[u].count(c)) return false;
-    u = to[u][c];
+ll dfs (int u, int p) {
+  if (dp[u] != -1) return dp[u];
+  dp[u] = 1;
+  for (auto [c, v]: to[u]) {
+    if (v == p) continue;
+    dp[u] += dfs(v, u);
   }
-  return true;
+  return dp[u];
 }
 
 void solve () {
@@ -58,13 +63,7 @@ void solve () {
   for (auto c: s) {
     add(c);
   }
-
-  int k; cin >> k;
-  while (k--) {
-    string t; cin >> t;
-    if (exist(t)) cout << "YES\n";
-    else cout << "NO\n";
-  }
+  cout << dfs(0, 0) - 1 << "\n";
 }
 
 int main() {
